@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const port = 3000;
-const userRouter = require('./routes/route');
+const userRouter = require('./routes/userRoute');
 
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
@@ -13,7 +13,7 @@ const options = {
             title: 'Application For Restfull API',
             version: '1.0.0',
             description: 'API documentation for your Company Project',
-        },
+        },  
         servers: [
             {
                 url: `http://localhost:${port}`,
