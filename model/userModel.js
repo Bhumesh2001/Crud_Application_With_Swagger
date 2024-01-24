@@ -1,19 +1,6 @@
-const mongoose = require('mongoose');
-const uri = 'mongodb://localhost:27017/Crud-app';
+const { Schema, model } = require('mongoose');
 
-mongoose.connect(uri);
-
-const db = mongoose.connection;
-
-db.on('connected', () => {
-    console.log('Connected to MongoDB');
-});
-
-db.on('error', (err) => {
-    console.error(`MongoDB connection error: ${err}`);
-});
-
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
     name: {
         type: String,
         required: true,
@@ -47,6 +34,6 @@ const userSchema = new mongoose.Schema({
     },
 });
 
-const User = mongoose.model('User', userSchema);
+const User = model('User', userSchema);
 
 module.exports = { User };

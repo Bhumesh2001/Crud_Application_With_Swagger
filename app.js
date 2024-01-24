@@ -6,6 +6,21 @@ const userRouter = require('./routes/userRoute');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
+const mongoose = require('mongoose');
+const uri = 'mongodb://localhost:27017/Crud-app';
+
+mongoose.connect(uri);
+
+const db = mongoose.connection;
+
+db.on('connected', () => {
+    console.log('Connected to MongoDB');
+});
+
+db.on('error', (err) => {
+    console.error(`MongoDB connection error: ${err}`);
+});
+
 const options = {
     definition: {
         openapi: '3.0.0',
@@ -20,7 +35,7 @@ const options = {
             }
         ],
     },
-    apis: ['./controllers/controller.js']
+    apis: ['./controllers/userController.js']
 };
 
 const swaggerSpec = swaggerJsdoc(options);
