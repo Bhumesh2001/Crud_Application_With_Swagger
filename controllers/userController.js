@@ -1,9 +1,10 @@
 const { User } = require('../model/userModel');
+const { generateToken } = require('../services/auth');
 
 /**
  * @swagger
  * /create-user:
- *   post:
+ *  post:
  *     summary: Create a new user
  *     requestBody:
  *       description: create a new record 
@@ -45,6 +46,78 @@ const registerUser = async (req, res) => {
         } else {
             res.status(500).json({ error: 'Internal Server Error' });
         };
+    };
+};
+
+/**
+ * @swagger
+ * /login-user:
+ *   post:
+ *     summary: Authenticate a user and generate a token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "john.doe@example.com"
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: "mypassword123"
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   example: "Login successful..."
+ *       401:
+ *         description: Unauthorized - Invalid email or password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   example: "email id and password are incorrect"
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Internal Server Error"
+ */
+
+const LoginUser = async (req, res) => {
+    try {
+        let { email, password } = req.body;
+        const userInfo = await User.findOne({ email }, { __v: 0, _id: 0 });
+        if (!userInfo) {
+            return res.status(401).send({ msg: "email id and password are incorrect" });
+        }
+        if (userInfo.password !== password) {
+            return res.status(401).send({ msg: "email id and password are incorrect" });
+        }
+        const token = generateToken(req.body);
+        res.cookie('token', token);
+        res.status(200).send({ msg: "Login successful..." });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ error });
     };
 };
 
@@ -94,7 +167,7 @@ const getUser = async (req, res) => {
     try {
         const email = req.params.email;
         const Users = await User.find({ email });
-        if(Users.length == 0){
+        if (Users.length == 0) {
             return res.status(404).json({ message: "User Not Found" });
         }
         console.log(Users);
@@ -173,7 +246,7 @@ const deleteUser = async (req, res) => {
     try {
         const email = req.params.email;
         const deletedData = await User.findOneAndDelete({ email }, { new: true });
-        if(deletedData == null){
+        if (deletedData == null) {
             return res.status(404).json({ message: 'Record not found' });
         }
         console.log(deletedData);
@@ -187,6 +260,7 @@ const deleteUser = async (req, res) => {
 
 module.exports = {
     registerUser,
+    LoginUser,
     getUser,
     updateUser,
     deleteUser,

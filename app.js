@@ -28,14 +28,14 @@ const options = {
             title: 'Application For Restfull API',
             version: '1.0.0',
             description: 'API documentation for your Company Project',
-        },  
+        },
         servers: [
             {
                 url: `http://localhost:${port}`,
             }
         ],
     },
-    apis: ['./controllers/userController.js']
+    apis: ['./controllers/userController.js'],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
@@ -44,9 +44,9 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(express.json());
 
-app.use('/',userRouter);
+app.use('/', userRouter);
 
-app.listen(port,()=>{
+app.listen(port, () => {
     console.log(`My Server Running at http://localhost:${port}`);
     console.log(`API Explorer Running at http://localhost:${port}/api-docs`);
 });
