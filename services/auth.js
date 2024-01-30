@@ -12,8 +12,7 @@ const verifyToken = async (req, res, next) => {
             req.data = data;
             console.log(data);
             next();
-        }
-        else {
+        }else {
             return res.status(401).json({ msg: 'Login First' });
         };
     } catch (error) {
